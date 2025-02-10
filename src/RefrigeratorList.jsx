@@ -11,30 +11,23 @@ export default function RefrigeratorList() {
 
   const fetchRefrigerators = async () => {
     try {
-      const response = await axios.get(
-        'http://localhost:9999/api/refrigerator'
-      );
-      if (
-        response.data &&
-        typeof response.data === 'object' &&
-        response.data.Data &&
-        Array.isArray(response.data.Data)
-      ) {
-        const formattedData = response.data.Data.map((item) => ({
-          refrigerator_id: item.Refrigerator_id,
-          person_name: item.Person_name,
-          person_birthday: item.Person_birthday,
-          entry_date: item.Entry_date,
-          exit_date: item.EXIT_DATE,
-        }));
-        setRefrigerators(formattedData);
-      } else {
-        console.error('서버 응답 이상', response.data);
-        setRefrigerators([]);
-      }
-    } catch (error) {
-      console.error('냉장고 데이터를 가져오는 중 오류 발생:', error);
-      setRefrigerators([]);
+      const response = await axios
+        .get('http://localhost:9999/api/refrigerator')
+        .then((res) => {
+          console.log(`데이터:${res.data}`);
+          const formattedData = res.data.data.map((item) => ({
+            refrigerator_id: item.refrigerator_id,
+            person_name: item.person_name,
+            person_birthday: item.person_birthday,
+            entry_date: item.entry_date,
+            exit_date: item.exit_date,
+          }));
+          setRefrigerators(formattedData);
+        })
+
+        .catch((res) => {
+          console.log('실패함', res.data.error);
+        });
     } finally {
       setLoading(false);
     }
